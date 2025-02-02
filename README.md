@@ -1,6 +1,6 @@
 
 # FUSH
-FUSH - programming language based on Python. ade as simple as possible for beginners, without brackets, quotes and even colon.
+FUSH - programming language based on Python. Syntaxis as simple as possible for beginners, without brackets, quotes and even colon.
 ## Syntaxis
 There's some code examples on FUSH
 
@@ -9,7 +9,7 @@ Calculator:
 loop
     output Write a number №1
     input a
-    var int a a
+    var num a a
     output Write an operation (+, -, *, /)
     input operation
     output Write a number №2
@@ -50,6 +50,32 @@ loop
 
 ```
 
+Clicker:
+```
+var balance 0
+var one_click 1
+loop
+    outputf type something to tap <balance>$
+    outputf your income <one_click>$/click
+    output 0 - upgrade 10$, 1 - upgrade 100$, 2 - upgrade 1000$
+    input filler
+
+    is filler = 0 str
+        is balance >= 10
+            var balance balance-10
+            var one_click one_click+1
+    also filler = 1 str
+        is balance >= 100
+            var balance balance-100
+            var one_click one_click+10
+    also filler = 2 str
+        is balance >= 1000
+            var balance balance-1000
+            var one_click one_click+100
+    also filler !=  str
+        var balance balance+one_click
+
+```
 ## Commands
 `output` - prints your text in console\
 `input` - takes input of client and write it in variable\
@@ -62,12 +88,18 @@ loop
 `repeat` - start cycle from start\
 `func` - declare a function. Usage: func name\
 `args` - used in functions, declare a argumets in function\
-`back` - returns a value in function
-`incase` - checks for errors in the code
+`back` - returns a value in function\
+`incase` - checks for errors in the code\
 `occurred` - executing if error occurred
 
 ## Functions
-`rand` - Returns random number from x to y, takes 2 arguments
+`rand` - returns random number from x to y, takes 2 arguments\
+`lenght` - returns lenght of string\
+`lowercase` - returns string in lower case\
+`uppercase` - returns string in upper case\
+`root` - returns square root of number. Takes 1 argument\
+`fact` - returns factorial of number. Takes 1 argument\
+`wait` - waiting for a certain amount of time in ms. Takes 1 argument
 
 ## How to install
 1. Go to newest version branch
