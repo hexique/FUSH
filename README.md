@@ -105,7 +105,8 @@ loop
 `write` - changes an element in arrive by index\
 `writestr` - changes an element in arrive to sring by index\
 `remove` - removes element in arrive by index\
-`read` - reads value in arrive by index
+`read` - reads value in arrive by index\
+`reverse` - reverses an arrive
 
 ## How to install
 1. Go to newest version branch
