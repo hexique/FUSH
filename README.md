@@ -1,6 +1,6 @@
 
 # FUSH
-FUSH - programming language based on Python. Syntaxis as simple as possible for beginners, without brackets, quotes and even colon.
+FUSH - programming language based on Python. ade as simple as possible for beginners, without brackets, quotes and even colon.
 ## Syntaxis
 There's some code examples on FUSH
 
@@ -99,7 +99,13 @@ loop
 `uppercase` - returns string in upper case\
 `root` - returns square root of number. Takes 1 argument\
 `fact` - returns factorial of number. Takes 1 argument\
-`wait` - waiting for a certain amount of time in ms. Takes 1 argument
+`wait` - waiting for a certain amount of time in ms. Takes 1 argument\
+`add` - adds element at the end of arrive\
+`addstr` - adds string element at the end of arrive\
+`write` - changes an element in arrive by index\
+`writestr` - changes an element in arrive to sring by index\
+`remove` - removes element in arrive by index\
+`read` - reads value in arrive by index
 
 ## How to install
 1. Go to newest version branch
