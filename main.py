@@ -6,10 +6,10 @@ from tkinter import filedialog
 import os
 import fush
 
-__version__ = "0.2"
+__version__ = "0.2.2"
 
 root = tk.Tk()
-root.geometry("1000x500")
+root.geometry("1000x800")
 root.resizable(True, True)
 root.title(f"cKit {__version__}") #console
 photo = tk.PhotoImage(file = 'fush.ico')
@@ -26,13 +26,18 @@ def save():
             initialfile="main.fush",
             defaultextension=".fush",
             initialdir=f"{os.path.dirname(os.path.abspath(__file__))}",
-            title="Save FUSH file",
+            title="Save file",
             filetypes=[("FUSH file", "*.fush"), ("Python file", "*.py"), ("Text file", "*.txt"), ("All files", "*.*")]
     )
     
     if file_path:
-        with open(file_path, "w") as f:
-            f.write(code.get("1.0", tk.END))
+        if file_path.endswith(".py"):
+            with open(file_path, "w", encoding="utf-8") as f:
+                f.write(fush.compile_code(code.get("1.0", tk.END))[1])
+        else:
+            with open(file_path, "w", encoding="utf-8") as f:
+                f.write(code.get("1.0", tk.END))
+                root.title(f'cKit {__version__} — {os.path.basename(file_path)}')
 
 def open_file():
     file_path = filedialog.askopenfilename(
