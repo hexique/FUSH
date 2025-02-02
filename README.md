@@ -56,4 +56,8 @@ until atts > 0
 `otherwise` - executes a block of code if all the statements turned out to be false.\
 `until` - executes a block of code until a statement becomes true. Usage: until {statemate}\
 `loop` - executes a block of code a certain number of times. Usage: loop {var1} to {end} from {start} {step}
-
+`exit` - exits from cycle\
+`repeat` - start cycle from start\
+`func` - declare a function. Usage: func name\
+`args` - used in functions, declare a argumets in function
+`back` - returns a value in function
