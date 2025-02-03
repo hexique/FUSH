@@ -1,20 +1,22 @@
 # console
 
 import tkinter as tk
-from tkinter import *
-from tkinter import ttk
-from tkinter import filedialog
 import os
 import fush
+from tkinter import *
+from tkinter import ttk
+from tkinter import messagebox
+from tkinter import filedialog
 
-__version__ = "1.0"
+
+__version__ = "1.1"
 
 root = tk.Tk()
 root.geometry("1000x800")
 root.resizable(True, True)
-root.title(f"cKit {__version__}") #console
+root.title(f"Ckit {__version__}") #console
 photo = tk.PhotoImage(file = 'ckit.ico')
-root.iconphoto(True,photo)
+root.iconphoto(True,photo,photo)
 
 
 code = tk.Text(root, height=20, width=60, bg='#1E1E1E', fg='#F0F0F0', insertbackground='#F0F0F0',font=('Cascadia Code', 10))
@@ -45,9 +47,6 @@ def update_options():
     options_label['bg'] = bg
     options_label['fg'] = fg
 
-    font_size_check['bg'] = bg
-    font_size_check['fg'] = fg
-
     light_theme_check['fg'] = fg
     light_theme_check['bg'] = bg
 
@@ -59,9 +58,25 @@ def update_options():
 
     matrix_theme_check['fg'] = fg
     matrix_theme_check['bg'] = bg
-
+    style.configure("Custom.Horizontal.TScale",
+                    background=bg,
+                    troughcolor=fg,
+                    sliderthickness=10,
+                    sliderlength=20)
+    try:
+        font_size_check['style'] = style
+    except:
+        pass
 def update_font(bind):
     code["font"] = ('Cascadia Code', font_size.get())
+
+style = ttk.Style()
+
+style.configure("Custom.Horizontal.TScale",
+                background=code["bg"],
+                troughcolor=code["fg"],
+                sliderthickness=10,
+                sliderlength=20)  
 
 def options():
     global options_root, code, root, theme, font_size, options_label, font_size_check, light_theme_check, dark_theme_check, black_theme_check, matrix_theme_check
@@ -76,8 +91,8 @@ def options():
 
     font_size = tk.IntVar(value=10)
 
-    font_size_check = tk.Scale(options_root, from_=5, to=30, orient=tk.HORIZONTAL, variable=font_size, label='Font size', 
-                               bg=code['bg'], fg=code['fg'], borderwidth=0, border=0, command=update_font)
+    font_size_check = ttk.Scale(options_root, from_=5, to=50, length=100, orient=tk.HORIZONTAL, variable=font_size, 
+                                command=update_font, style="Custom.Horizontal.TScale")
     font_size_check.place(x=10, y=70)
 
     theme = tk.StringVar(value='dark')
@@ -99,8 +114,9 @@ def options():
 
 def save():
     if " — " in root.title():
-        with open(file_path, "w", encoding="utf-8") as f:
+        with open(root.title().split(" — ")[-1], "w", encoding="utf-8") as f:
             f.write(code.get("1.0", tk.END)[1])
+        return
 
 
     file_path = filedialog.asksaveasfilename(
@@ -118,9 +134,11 @@ def save():
         else:
             with open(file_path, "w", encoding="utf-8") as f:
                 f.write(code.get("1.0", tk.END))
-                root.title(f'cKit {__version__} — {os.path.basename(file_path)}')
+                root.title(f'Ckit {__version__} — {os.path.basename(file_path)}')
 
 def open_file():
+    if " — " in root.title():
+        messagebox.showwarning(root.title(), "Unsaved changes detected. Do you want to save?")
     file_path = filedialog.askopenfilename(
 
     )
@@ -129,7 +147,13 @@ def open_file():
         with open(file_path, "r", encoding="utf-8") as f:
             code.delete('1.0', tk.END)
             code.insert('1.0', f.read())
-            root.title(f'cKit {__version__} — {os.path.basename(file_path)}')
+            root.title(f'Ckit {__version__} — {os.path.basename(file_path)}')
+
+def new_file():
+    if " — " in root.title():
+        messagebox.showwarning(root.title(), "Unsaved changes detected. Do you want to save?")
+    code.delete('1.0', tk.END)
+    root.title(f"Ckit {__version__}")
 
 def run():
     try:
@@ -143,6 +167,7 @@ def run():
 
 menu = tk.Menu(root)
 file_menu = tk.Menu(menu, tearoff=0)
+file_menu.add_command(label="New file",command=new_file)
 file_menu.add_command(label="Save",command=save)
 file_menu.add_command(label="Open",command=open_file)
 file_menu.add_command(label="Run code",command=run)
