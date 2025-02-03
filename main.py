@@ -9,7 +9,7 @@ from tkinter import messagebox
 from tkinter import filedialog
 
 
-__version__ = "1.1"
+__version__ = "1.1.1"
 
 root = tk.Tk()
 root.geometry("1000x800")
@@ -18,9 +18,25 @@ root.title(f"Ckit {__version__}") #console
 photo = tk.PhotoImage(file = 'ckit.ico')
 root.iconphoto(True,photo,photo)
 
+path = None
 
 code = tk.Text(root, height=20, width=60, bg='#1E1E1E', fg='#F0F0F0', insertbackground='#F0F0F0',font=('Cascadia Code', 10))
 code.pack(fill=tk.BOTH, expand=True)
+
+lines = ''
+chars = code.get("1.0", tk.END)
+
+data = tk.Label(root, bg=code['bg'], fg=code['fg'], justify="right",text=f"Lines: {len(lines) - 1} Total characters: {len(chars)}")
+
+def update_data(event):
+    global lines
+    chars = code.get("1.0", tk.END)
+    lines = code.get("1.0",tk.END).split('\n')
+    data['text'] = f"Lines: {len(lines) - 1} Total characters: {len(chars)}"
+    data.pack(anchor=tk.SE)
+
+code.bind("<KeyRelease>", lambda event: update_data(event))
+
 # tk.Label(root, text="Terminal").place(x=10, y=335)
 # result = tk.Text(root, height=10, width=60,state='disabled')
 # result.pack(fill=tk.BOTH, expand=True)
@@ -83,7 +99,7 @@ def options():
 
     options_root = tk.Toplevel()
     options_root.geometry("500x500")
-    options_root.title("Options")
+    options_root.title(f'Ckit {__version__} — Options')
     options_root.config(bg=code['bg'])
 
     options_label = tk.Label(options_root, text="Options", font=('TkDefaultFont', 35),bg=code['bg'],fg=code['fg'])
@@ -113,9 +129,10 @@ def options():
     options_root.mainloop()
 
 def save():
-    if " — " in root.title():
-        with open(root.title().split(" — ")[-1], "w", encoding="utf-8") as f:
-            f.write(code.get("1.0", tk.END)[1])
+    global path
+    if path != None:
+        with open(path, "w", encoding="utf-8") as f:
+            f.write(code.get("1.0", tk.END))
         return
 
 
@@ -127,6 +144,7 @@ def save():
             filetypes=[("FUSH file", "*.fush"), ("Python file", "*.py"), ("Text file", "*.txt"), ("All files", "*.*")]
     )
     
+    path = file_path
     if file_path:
         if file_path.endswith(".py"):
             with open(file_path, "w", encoding="utf-8") as f:
@@ -137,12 +155,13 @@ def save():
                 root.title(f'Ckit {__version__} — {os.path.basename(file_path)}')
 
 def open_file():
-    if " — " in root.title():
+    global path
+    if path != None:
         messagebox.showwarning(root.title(), "Unsaved changes detected. Do you want to save?")
     file_path = filedialog.askopenfilename(
 
     )
-    
+    path = file_path
     if file_path:
         with open(file_path, "r", encoding="utf-8") as f:
             code.delete('1.0', tk.END)
@@ -156,11 +175,8 @@ def new_file():
     root.title(f"Ckit {__version__}")
 
 def run():
+    save()
     try:
-        # code_str = code.get("1.0", tk.END).strip()
-        # result.insert('1.0', f"Output: {fush.compile_code(code_str)[1]}\n")
-        # result.config(state='normal')
-        # fush.exit_code()
         fush.execute(code.get("1.0", tk.END).strip())
     except RuntimeError:
         pass
