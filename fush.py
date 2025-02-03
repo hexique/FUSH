@@ -93,6 +93,17 @@ def compile_code(code):
                     code_python += f'{parts[2]} = random.randint({parts[4]}, {parts[5]})\n'
                     continue
 
+                elif parts[3] == 'choose': # var func x choose str string
+                    if RAND == False:
+                        code_python = 'import random\n' + code_python
+                        RAND = True
+                    if parts[4] == 'str' or parts[4] =='string':
+                        result = ' '.join(parts[2:])
+                        result = result.replace('<', '{').replace('>', '}')
+                        code_python += f'{parts[2]} = random.choice(f"{result}")\n'
+                    code_python += f'{parts[2]} = random.choice({parts[4]}, {parts[5]})\n'
+                    continue
+
                 elif parts[3] == 'lenght':
                     result = ' '.join(parts[4:])
                     result = result.replace('<', '{').replace('>', '}')
@@ -130,9 +141,32 @@ def compile_code(code):
                     code_python += f'{parts[2]} = {parts[4]}[{parts[-1]}]\n'
                     continue
 
-                elif parts[3] == 'reverse': # var func x read arrive 0
-                    code_python += f'{parts[2]} = {parts[4]}[{parts[-1]}]\n'
+                elif parts[3] == 'reverse': # var func x reverse arrive
+                    code_python += f'{parts[2]} = {parts[-1]}[:-1]\n'
                     continue
+
+                elif parts[3] == 'unique': # var func x unique arrive
+                    code_python += f'{parts[2]} = list(set({parts[-1]}))\n'
+                    continue
+
+                elif parts[3] == 'sort': # var func x sort arrive
+                    code_python += f'{parts[2]} = sorted({parts[-1]})\n'
+                    continue
+
+                elif parts[3] == 'unix': # var func x time 1738579042
+                    if TIME == False:
+                        code_python = 'import time\n' + code_python
+                        TIME = True
+                    code_python += f'{parts[2]} = time.time({parts[-1]})\n'
+                    continue
+
+                elif parts[3] == 'time': # var func x time 1738579042
+                    if TIME == False:
+                        code_python = 'import time\n' + code_python
+                        TIME = True
+                    code_python += f'{parts[2]} = time.ctime({parts[-1]})\n'
+                    continue
+
 
             else:
                 code_python += f'{parts[1]} = {parts[-1]}\n'

@@ -7,7 +7,7 @@ from tkinter import filedialog
 import os
 import fush
 
-__version__ = "0.3.1"
+__version__ = "1.0"
 
 root = tk.Tk()
 root.geometry("1000x800")
@@ -16,52 +16,93 @@ root.title(f"cKit {__version__}") #console
 photo = tk.PhotoImage(file = 'ckit.ico')
 root.iconphoto(True,photo)
 
-code = tk.Text(root, height=20, width=60, bg='#1E1E1E', fg='#F0F0F0', font=("Cascadia Code", 12))
+
+code = tk.Text(root, height=20, width=60, bg='#1E1E1E', fg='#F0F0F0', insertbackground='#F0F0F0',font=('Cascadia Code', 10))
 code.pack(fill=tk.BOTH, expand=True)
 # tk.Label(root, text="Terminal").place(x=10, y=335)
 # result = tk.Text(root, height=10, width=60,state='disabled')
 # result.pack(fill=tk.BOTH, expand=True)
 
 def update_options():
-    global code, root, dark_theme, font_size
-    if dark_theme.get():
-        code.config(bg='#1E1E1E', fg='#F0F0F0')
-        root.config(bg='#1E1E1E')
-    else:
-        code.config(bg='#F0F0F0', fg='#1E1E1E')
-        root.config(bg='#F0F0F0')
+    global code, root, theme, font_size, options_label, dark_theme_check
+    if theme.get() == 'light':
+        bg = '#F0F0F0'
+        fg = '#1E1E1E'
+    elif theme.get() == 'dark':
+        bg = '#1E1E1E'
+        fg = '#F0F0F0'
+    elif theme.get() == 'black':
+        bg = '#000000'
+        fg = '#FFFFFF'
+    elif theme.get() == 'matrix':
+        bg = '#000000'
+        fg = '#00FF00'
+
+    code.config(bg=bg, fg=fg, insertbackground=fg)
+    options_root.config(bg=bg)
+    options_label.config(bg=bg, fg=fg)
+    dark_theme_check.config(bg=bg, fg=fg)
+    options_label['bg'] = bg
+    options_label['fg'] = fg
+
+    font_size_check['bg'] = bg
+    font_size_check['fg'] = fg
+
+    light_theme_check['fg'] = fg
+    light_theme_check['bg'] = bg
+
+    dark_theme_check['fg'] = fg
+    dark_theme_check['bg'] = bg
+
+    black_theme_check['fg'] = fg
+    black_theme_check['bg'] = bg
+
+    matrix_theme_check['fg'] = fg
+    matrix_theme_check['bg'] = bg
 
 def update_font(bind):
-    code["font"] = ("Cascadia Code", font_size.get())
-
+    code["font"] = ('Cascadia Code', font_size.get())
 
 def options():
-    global options_root, code, root, dark_theme, font_size
-
-    if 'root' not in globals():
-        root = tk.Tk()
-        root.geometry("500x500")
-        root.title("Main Window")
-        code = tk.Text(root, bg='#1E1E1E', fg='#F0F0F0')
-        code.pack(fill=tk.BOTH, expand=True)
+    global options_root, code, root, theme, font_size, options_label, font_size_check, light_theme_check, dark_theme_check, black_theme_check, matrix_theme_check
 
     options_root = tk.Toplevel()
     options_root.geometry("500x500")
     options_root.title("Options")
     options_root.config(bg=code['bg'])
 
-    tk.Label(options_root, text="Options", font=('TkDefaultFont', 35)).place(x=10, y=10)
+    options_label = tk.Label(options_root, text="Options", font=('TkDefaultFont', 35),bg=code['bg'],fg=code['fg'])
+    options_label.place(x=10, y=10)
 
     font_size = tk.IntVar(value=10)
-    ttk.Scale(options_root, from_=5, to=30, orient=tk.HORIZONTAL, variable=font_size, command=update_font).place(x=10, y=70)
 
-    dark_theme = tk.IntVar(value=1)
-    ttk.Checkbutton(options_root, text="Dark theme", variable=dark_theme, command=update_options).place(x=10, y=150)
+    font_size_check = tk.Scale(options_root, from_=5, to=30, orient=tk.HORIZONTAL, variable=font_size, label='Font size', 
+                               bg=code['bg'], fg=code['fg'], borderwidth=0, border=0, command=update_font)
+    font_size_check.place(x=10, y=70)
+
+    theme = tk.StringVar(value='dark')
+
+    light_theme_check = tk.Radiobutton(options_root, text="Light theme", value='light', variable=theme, bg=code['bg'], fg=code['fg'], command=update_options)
+    light_theme_check.place(x=10, y=170)
+
+    dark_theme_check = tk.Radiobutton(options_root, text="Dark theme", value='dark', variable=theme, bg=code['bg'], fg=code['fg'],command=update_options)
+    dark_theme_check.place(x=10, y=200)
+
+    black_theme_check = tk.Radiobutton(options_root, text="Black theme", value='black', variable=theme, bg=code['bg'], fg=code['fg'],command=update_options)
+    black_theme_check.place(x=10, y=230)
+
+    matrix_theme_check = tk.Radiobutton(options_root, text="Matrix", value='matrix', variable=theme, bg=code['bg'], fg=code['fg'],command=update_options)
+    matrix_theme_check.place(x=10, y=260)
 
 
     options_root.mainloop()
 
 def save():
+    if " — " in root.title():
+        with open(file_path, "w", encoding="utf-8") as f:
+            f.write(code.get("1.0", tk.END)[1])
+
+
     file_path = filedialog.asksaveasfilename(
             initialfile="main.fush",
             defaultextension=".fush",
