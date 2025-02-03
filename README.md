@@ -111,7 +111,9 @@ loop
 `sort` - sotrs an arrive\
 `unix` - returns current time in unix format\
 `time` - converts unix time to normal format\
-`choose` - returns random element from arrive
+`choose` - returns random element from arrive\
+`play` - plays a sound from path\
+
 
 ## How to install
 1. Go to the main branch
