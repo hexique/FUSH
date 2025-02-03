@@ -11,12 +11,13 @@ def execute(code):
     print()
     print(f'Python code:\n{code[1]}')
     print()
-    exec(code[1])
+    exec(code[1], globals())
 
 def compile_code(code):
     RAND = False
     MATH = False
     TIME = False
+    PLAYSOUND = False
     code = code.split('\n')
     code_python = ''
     splited_python_code = code_python.split('\n')
@@ -77,15 +78,6 @@ def compile_code(code):
 
             elif parts[1] == 'func' or parts[1] == 'function': # var func x func_name arg1 arg2...
                 result = ''
-                if len(parts) <= 4:
-                    code_python += f'{parts[2]} = {parts[3]}()\n'
-
-                else:
-                    for j in parts[4:]:
-                        result += f'{j}, '
-                    result = result[:-2]
-                    code_python += f'{parts[2]} = {parts[3]}({result})\n'
-
                 if parts[3] == 'rand': # var func x rand 1 100
                     if RAND == False:
                         code_python = 'import random\n' + code_python
@@ -166,7 +158,16 @@ def compile_code(code):
                         TIME = True
                     code_python += f'{parts[2]} = time.ctime({parts[-1]})\n'
                     continue
+    
+                if len(parts) <= 4:
+                    code_python += f'{parts[2]} = {parts[3]}()\n'
+                    continue
 
+                else:
+                    for j in parts[4:]:
+                        result += f'{j}, '
+                    result = result[:-2]
+                    code_python += f'{parts[2]} = {parts[3]}({result})\n'
 
             else:
                 code_python += f'{parts[1]} = {parts[-1]}\n'
@@ -240,6 +241,7 @@ def compile_code(code):
                     TIME = True
                 result = parts[-1].replace('<', '{').replace('>', '}')
                 code_python += f'time.sleep({result} / 1000)\n'
+                continue
 
             elif parts[1] == 'add': # call add arrive x
                 code_python += f'{parts[2]}.append({parts[-1]})\n'
@@ -262,6 +264,16 @@ def compile_code(code):
                 result = ' '.join(parts[4:]).replace('<', '{').replace('>', '}')
                 code_python += f'{parts[2]}[{parts[3]}] = f"{result}"\n'
                 continue
+
+
+            elif parts[1] == 'play': # call play path\to\the\file
+                result = ''.join(parts[-1]).replace('<', '{').replace('>', '}').replace('/', '\\')
+                if PLAYSOUND == False:
+                    code_python = 'import playsound\n' + code_python
+                    PLAYSOUND = True
+                code_python += f'playsound.playsound("{result}")\n'
+                continue
+
 
             if len(parts) <= 2:
                 code_python += f'{parts[1]}()\n'
