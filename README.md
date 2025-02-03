@@ -106,9 +106,14 @@ loop
 `writestr` - changes an element in arrive to sring by index\
 `remove` - removes element in arrive by index\
 `read` - reads value in arrive by index\
-`reverse` - reverses an arrive
+`reverse` - reverses an arrive\
+`unique` - removes dublicates and sort arrive\
+`sort` - sotrs an arrive\
+`unix` - returns current time in unix format\
+`time` - converts unix time to normal format\
+`choose` - returns random element from arrive
 
 ## How to install
-1. Go to newest version branch
+1. Go to the main branch
 2. Download ZIP file and unpack this in single directory
 3. Launch main.py
