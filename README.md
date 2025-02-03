@@ -118,4 +118,6 @@ loop
 ## How to install
 1. Go to the main branch
 2. Download ZIP file and unpack this in single directory
-3. Launch main.py
+3. If you don't install playsound type this in cmd:
+   `pip install playsound`  
+4. Launch main.py
