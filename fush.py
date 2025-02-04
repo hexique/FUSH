@@ -4,13 +4,16 @@
 #    # #    #  # #
 #    ###  ###  # #
 
+DEV_MODE = True
+
 def execute(code):
-    code = compile_code(code)
-    fush_code = '\n'.join(code[0])
-    print(f'FUSH code:\n{fush_code}')
-    print()
-    print(f'Python code:\n{code[1]}')
-    print()
+    if DEV_MODE:
+        code = compile_code(code)
+        fush_code = '\n'.join(code[0])
+        print(f'FUSH code:\n{fush_code}')
+        print()
+        print(f'Python code:\n{code[1]}')
+        print()
     exec(code[1], globals())
 
 def compile_code(code):
@@ -60,10 +63,13 @@ def compile_code(code):
         elif parts[0] == 'input': # input x
             code_python += f'{parts[1]} = input()\n'
         elif parts[0] == 'var': # check x == y
-            if parts[1] == 'str' or parts[1] == 'string': # var str x "Hello World"
-                result = ' '.join(parts[2:])
-                result = result.replace('<', '{').replace('>', '}')
-                code_python += f'{parts[2]} = f"{result}"\n'
+            if parts[1] == 'str' or parts[1] == 'string': # var str x Hello World
+                if len(parts) == 3:
+                    code_python += f'{parts[2]} = str({parts[-1]})\n'
+                else:
+                    result = ' '.join(parts[2:])
+                    result = result.replace('<', '{').replace('>', '}')
+                    code_python += f'{parts[2]} = f"{result}"\n'
             elif parts[1] == 'dec' or parts[1] == 'decimal': # var dec x 10.5
                 code_python += f'{parts[2]} = float({parts[-1]})\n'
             elif parts[1] == 'int' or parts[1] == 'integer': # var num x 10
@@ -78,6 +84,7 @@ def compile_code(code):
 
             elif parts[1] == 'func' or parts[1] == 'function': # var func x func_name arg1 arg2...
                 result = ''
+                # random
                 if parts[3] == 'rand': # var func x rand 1 100
                     if RAND == False:
                         code_python = 'import random\n' + code_python
@@ -95,6 +102,14 @@ def compile_code(code):
                         code_python += f'{parts[2]} = random.choice(f"{result}")\n'
                     code_python += f'{parts[2]} = random.choice({parts[4]}, {parts[5]})\n'
                     continue
+                
+                elif parts[3] == 'shuffle': # var func x shuflle arv
+                    if RAND == False:
+                        code_python = 'import random\n' + code_python
+                        RAND = True
+                    code_python += f'{parts[2]} = random.shuffle({parts[4]}, {parts[5]})\n'
+
+                # strings
 
                 elif parts[3] == 'lenght':
                     result = ' '.join(parts[4:])
@@ -145,11 +160,11 @@ def compile_code(code):
                     code_python += f'{parts[2]} = sorted({parts[-1]})\n'
                     continue
 
-                elif parts[3] == 'unix': # var func x time 1738579042
+                elif parts[3] == 'unix': # var func x unix
                     if TIME == False:
                         code_python = 'import time\n' + code_python
                         TIME = True
-                    code_python += f'{parts[2]} = time.time({parts[-1]})\n'
+                    code_python += f'{parts[2]} = time.time()\n'
                     continue
 
                 elif parts[3] == 'time': # var func x time 1738579042
@@ -265,16 +280,6 @@ def compile_code(code):
                 code_python += f'{parts[2]}[{parts[3]}] = f"{result}"\n'
                 continue
 
-
-            elif parts[1] == 'play': # call play path\to\the\file
-                result = ''.join(parts[-1]).replace('<', '{').replace('>', '}').replace('/', '\\')
-                if PLAYSOUND == False:
-                    code_python = 'import playsound\n' + code_python
-                    PLAYSOUND = True
-                code_python += f'playsound.playsound("{result}")\n'
-                continue
-
-
             if len(parts) <= 2:
                 code_python += f'{parts[1]}()\n'
             else:
@@ -296,20 +301,21 @@ def compile_code(code):
             code_python += f'try:\n'
 
         elif parts[0] == 'occurred': # occurred x
-            if len(parts) >= 3 and parts[1] == 'error':
-                code_python += f'except {parts[-1]}:\n'
-            code_python += f'except Exception as {parts[1]}:\n'
+
+            if len(parts) == 1:
+                code_python += f'except:\n'
+            elif len(parts) == 2:
+                code_python += f'except Exception as {parts[1]}:\n'
+            else:
+                if parts[1] == 'error':
+                    code_python += f'except {parts[-1]}:\n'
 
 
         # else:
         #     print(f"Name '{parts[0]}' is not defined.")
         #     return
         
-
         i += 1
-
-
-
 
     if __name__ == "__main__":
         execute(code, code_python)
