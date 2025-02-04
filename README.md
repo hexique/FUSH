@@ -112,7 +112,7 @@ loop
 `unix` - returns current time in unix format\
 `time` - converts unix time to normal format\
 `choose` - returns random element from arrive\
-`play` - plays a sound from path\
+`shuffle` - shuffles an arrive
 
 
 ## How to install
