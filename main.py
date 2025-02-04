@@ -9,7 +9,7 @@ from tkinter import messagebox
 from tkinter import filedialog
 from time import time
 
-__version__ = "1.1.2"
+__version__ = "1.1.3"
 
 root = tk.Tk()
 root.geometry("1000x800")
@@ -193,8 +193,10 @@ def new_file():
 
 def run():
     save()
-    fush.execute(code.get("1.0", tk.END).strip())
-
+    try:
+        fush.execute(code.get("1.0", tk.END).strip())
+    except RuntimeError:
+        pass
 
 menu = tk.Menu(root)
 file_menu = tk.Menu(menu, tearoff=0)
