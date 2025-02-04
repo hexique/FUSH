@@ -1,15 +1,15 @@
 # console
 
-import tkinter as tk
 import os
 import fush
+import tkinter as tk
 from tkinter import *
 from tkinter import ttk
 from tkinter import messagebox
 from tkinter import filedialog
+from time import time
 
-
-__version__ = "1.1.1"
+__version__ = "1.1.2"
 
 root = tk.Tk()
 root.geometry("1000x800")
@@ -17,23 +17,24 @@ root.resizable(True, True)
 root.title(f"Ckit {__version__}") #console
 photo = tk.PhotoImage(file = 'ckit.ico')
 root.iconphoto(True,photo,photo)
+root.config(bg='#1E1E1E')
 
 path = None
 
-code = tk.Text(root, height=20, width=60, bg='#1E1E1E', fg='#F0F0F0', insertbackground='#F0F0F0',font=('Cascadia Code', 10))
+code = tk.Text(root, height=20, width=60, bg='#1E1E1E', fg='#F0F0F0', insertbackground='#F0F0F0',font=('Cascadia Code', 10), wrap="none")
 code.pack(fill=tk.BOTH, expand=True)
 
 lines = ''
 chars = code.get("1.0", tk.END)
 
-data = tk.Label(root, bg=code['bg'], fg=code['fg'], justify="right",text=f"Lines: {len(lines) - 1} Total characters: {len(chars)}")
+data = tk.Label(root, bg=code['bg'], fg=code['fg'], justify="right",text=f"Lines: {len(lines)}\n Total characters: {len(chars)}")
+data.place(x=864, y=760)
 
-def update_data(event):
+def update_data(bind):
     global lines
     chars = code.get("1.0", tk.END)
     lines = code.get("1.0",tk.END).split('\n')
-    data['text'] = f"Lines: {len(lines) - 1} Total characters: {len(chars)}"
-    data.pack(anchor=tk.SE)
+    data['text'] = f"Lines: {len(lines) - 1}\n Total characters: {len(chars)}"
 
 code.bind("<KeyRelease>", lambda event: update_data(event))
 
@@ -42,7 +43,7 @@ code.bind("<KeyRelease>", lambda event: update_data(event))
 # result.pack(fill=tk.BOTH, expand=True)
 
 def update_options():
-    global code, root, theme, font_size, options_label, dark_theme_check
+    global code, root, theme, font_size, options_label, dark_theme_check, show_data_check
     if theme.get() == 'light':
         bg = '#F0F0F0'
         fg = '#1E1E1E'
@@ -74,6 +75,10 @@ def update_options():
 
     matrix_theme_check['fg'] = fg
     matrix_theme_check['bg'] = bg
+
+    show_data_check['fg'] = fg
+    show_data_check['bg'] = bg
+
     style.configure("Custom.Horizontal.TScale",
                     background=bg,
                     troughcolor=fg,
@@ -83,9 +88,17 @@ def update_options():
         font_size_check['style'] = style
     except:
         pass
+
 def update_font(bind):
     code["font"] = ('Cascadia Code', font_size.get())
 
+def toggle_data():
+    global data
+    if show_data.get():
+        data = tk.Label(root, bg=code['bg'], fg=code['fg'], justify="right",text=f"Lines: {len(lines)}\n Total characters: {len(chars)}")
+        data.place(x=864, y=760)
+    else:
+        data.destroy() 
 style = ttk.Style()
 
 style.configure("Custom.Horizontal.TScale",
@@ -95,7 +108,8 @@ style.configure("Custom.Horizontal.TScale",
                 sliderlength=20)  
 
 def options():
-    global options_root, code, root, theme, font_size, options_label, font_size_check, light_theme_check, dark_theme_check, black_theme_check, matrix_theme_check
+    global options_root, code, root, theme, font_size, options_label, font_size_check, light_theme_check, dark_theme_check
+    global black_theme_check, matrix_theme_check, show_data_check, show_data
 
     options_root = tk.Toplevel()
     options_root.geometry("500x500")
@@ -124,8 +138,11 @@ def options():
 
     matrix_theme_check = tk.Radiobutton(options_root, text="Matrix", value='matrix', variable=theme, bg=code['bg'], fg=code['fg'],command=update_options)
     matrix_theme_check.place(x=10, y=260)
-
-
+    
+    show_data = tk.IntVar(value=1)
+    show_data_check = tk.Checkbutton(options_root, text="Show info", variable=show_data, bg=code['bg'], fg=code['fg'], 
+                                     command=toggle_data)
+    show_data_check.place(x=200, y=70)
     options_root.mainloop()
 
 def save():
@@ -176,10 +193,8 @@ def new_file():
 
 def run():
     save()
-    try:
-        fush.execute(code.get("1.0", tk.END).strip())
-    except RuntimeError:
-        pass
+    fush.execute(code.get("1.0", tk.END).strip())
+
 
 menu = tk.Menu(root)
 file_menu = tk.Menu(menu, tearoff=0)
