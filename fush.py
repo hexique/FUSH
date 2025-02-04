@@ -20,7 +20,6 @@ def compile_code(code):
     RAND = False
     MATH = False
     TIME = False
-    PLAYSOUND = False
     code = code.split('\n')
     code_python = ''
     splited_python_code = code_python.split('\n')
@@ -111,10 +110,13 @@ def compile_code(code):
 
                 # strings
 
-                elif parts[3] == 'lenght':
-                    result = ' '.join(parts[4:])
-                    result = result.replace('<', '{').replace('>', '}')
-                    code_python += f'{parts[2]} = len(f"{result}")\n'
+                elif parts[3] == 'lenght': # var func x lenght <x>
+                    if parts[4] == 'str' or parts[4] =='string':
+                        result = ' '.join(parts[4:])
+                        result = result.replace('<', '{').replace('>', '}')
+                        code_python += f'{parts[2]} = len(f"{result}")\n'
+                    elif parts[4] == 'arv' or parts[4] == 'arrive':
+                        code_python += f'{parts[2]} = len({parts[-1]})\n'
                     continue
 
                 elif parts[3] == 'lowercase':
@@ -173,7 +175,12 @@ def compile_code(code):
                         TIME = True
                     code_python += f'{parts[2]} = time.ctime({parts[-1]})\n'
                     continue
-    
+
+                elif parts[3] == 'readfile': # var func x readfile path/to/file.txt 
+                    result = ' '.join(parts[4:]).replace('<', '{').replace('>', '}')
+                    code_python += f'with open(f"{result}"), "r", encoding="utf-8") as f: {parts[2]} = f.read()"\n'
+                    continue
+
                 if len(parts) <= 4:
                     code_python += f'{parts[2]} = {parts[3]}()\n'
                     continue
@@ -278,6 +285,11 @@ def compile_code(code):
             elif parts[1] == 'writestr': # call write arrive 0 5
                 result = ' '.join(parts[4:]).replace('<', '{').replace('>', '}')
                 code_python += f'{parts[2]}[{parts[3]}] = f"{result}"\n'
+                continue
+
+            elif parts[1] == 'writefile': # call writefile path/to/your/file.txt string
+                result = ' '.join(parts[3:]).replace('<', '{').replace('>', '}')
+                code_python += f'with open(f"{parts[2]}", "w", encoding="utf-8") as f: f.write(f"{result}")\n'
                 continue
 
             if len(parts) <= 2:
