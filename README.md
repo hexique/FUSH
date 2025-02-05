@@ -112,8 +112,9 @@ loop
 `unix` - returns current time in unix format\
 `time` - converts unix time to normal format\
 `choose` - returns random element from arrive\
-`shuffle` - shuffles an arrive
-
+`shuffle` - shuffles an arrive\
+`readfile` - read a file and saves this to variable\
+`writefile` - writes a string to file
 
 ## How to install
 1. Go to the main branch
