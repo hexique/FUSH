@@ -74,7 +74,7 @@ def compile_code(code):
             elif parts[1] == 'int' or parts[1] == 'integer': # var num x 10
                 code_python += f'{parts[2]} = int({parts[-1]})\n'
             elif parts[1] == 'arv' or parts[1] == 'arrive': # var arv x 1 2 3...
-                if len(parts) <= 3:
+                if len(parts) == 3:
                     code_python += f'{parts[2]} = []\n'
                 else:
                     result = ', '.join(parts[3:])
@@ -198,7 +198,7 @@ def compile_code(code):
         elif parts[0] == 'is': # is x = y type
             if parts[2] == '=': parts[2] = '=='
             if len(parts) >= 5:
-                if parts[4] == 'str' or parts[4] == 'string':
+                if parts[3] == 'str' or parts[4] == 'string':
                     code_python += f'if {parts[1]} {parts[2]} \'{parts[3]}\':\n'
             else:
                 code_python += f'if {parts[1]} {parts[2]} {parts[3]}:\n'
@@ -220,7 +220,10 @@ def compile_code(code):
                 code_python += f'while True:\n'
             else:
                 if parts[2] == '=': parts[2] = '=='
-                code_python += f'while {parts[1]} {parts[2]} {parts[3]}:\n'
+                if parts[-1] == 'str' or parts[-1] =='string':
+                    code_python += f'while {parts[1]} {parts[2]} \'{parts[3]}\':\n'
+                else:
+                    code_python += f'while {parts[1]} {parts[2]} {parts[3]}:\n'
 
         elif parts[0] == 'loop': # loop i to 10 from 0 i+5
             if len(parts) == 7:
@@ -288,9 +291,13 @@ def compile_code(code):
                 continue
 
             elif parts[1] == 'writefile': # call writefile path/to/your/file.txt string
-                result = ' '.join(parts[3:]).replace('<', '{').replace('>', '}')
-                code_python += f'with open(f"{parts[2]}", "w", encoding="utf-8") as f: f.write(f"{result}")\n'
-                continue
+                if parts[3] == '+':
+                    result = ' '.join(parts[4:]).replace('<', '{').replace('>', '}')
+                    code_python += f'with open(f"{parts[2]}", "a", encoding="utf-8") as f: f.write(f"{result}")\n'
+                else:
+                    result = ' '.join(parts[3:]).replace('<', '{').replace('>', '}')
+                    code_python += f'with open(f"{parts[2]}", "w", encoding="utf-8") as f: f.write(f"{result}")\n'
+                    continue
 
             if len(parts) <= 2:
                 code_python += f'{parts[1]}()\n'
