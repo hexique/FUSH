@@ -9,7 +9,7 @@ from tkinter import messagebox
 from tkinter import filedialog
 from time import time
 
-__version__ = "1.1.3"
+__version__ = "1.2"
 
 root = tk.Tk()
 root.geometry("1000x800")
@@ -84,6 +84,11 @@ def update_options():
                     troughcolor=fg,
                     sliderthickness=10,
                     sliderlength=20)
+    
+    data.destroy() 
+    data = tk.Label(root, bg=code['bg'], fg=code['fg'], justify="right",text=f"Lines: {len(lines)}\n Total characters: {len(chars)}")
+    data.place(x=864, y=760)
+        
     try:
         font_size_check['style'] = style
     except:
@@ -160,9 +165,9 @@ def save():
             title="Save file",
             filetypes=[("FUSH file", "*.fush"), ("Python file", "*.py"), ("Text file", "*.txt"), ("All files", "*.*")]
     )
-    
-    path = file_path
+
     if file_path:
+        path = file_path
         if file_path.endswith(".py"):
             with open(file_path, "w", encoding="utf-8") as f:
                 f.write(fush.compile_code(code.get("1.0", tk.END))[1])
@@ -178,12 +183,19 @@ def open_file():
     file_path = filedialog.askopenfilename(
 
     )
-    path = file_path
+    
     if file_path:
+        path = file_path
         with open(file_path, "r", encoding="utf-8") as f:
             code.delete('1.0', tk.END)
             code.insert('1.0', f.read())
             root.title(f'Ckit {__version__} — {os.path.basename(file_path)}')
+
+def guide():
+    pass
+
+def about():
+    pass
 
 def new_file():
     if " — " in root.title():
@@ -207,6 +219,10 @@ file_menu.add_command(label="Run code",command=run)
 file_menu.add_command(label="Options",command=options)
 file_menu.add_command(label="Exit",command=quit)
 menu.add_cascade(label="File", menu=file_menu)
+file_menu = tk.Menu(menu, tearoff=0)
+file_menu.add_command(label="About",command=about)
+file_menu.add_command(label="Guide",command=guide)
+menu.add_cascade(label="Help", menu=file_menu)
 
 root.bind("<Control-s>", lambda event: save())
 root.bind("<Control-o>", lambda event: open_file())
